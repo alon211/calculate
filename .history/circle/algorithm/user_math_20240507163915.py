@@ -1,0 +1,1 @@
+def simpson_integration(f, upper, b, n):
