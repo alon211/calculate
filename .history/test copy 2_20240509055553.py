@@ -109,14 +109,16 @@ def update(frame):
     # 更新点的位置
   
     point.set_data([x], [y])
-    if frame >= max_frames-1:
+    if frame >= max_frames:
         ani.event_source.stop()
     # 更新轨迹线的数据
     # if frame >= radius * 10:
     old_data = trajectory_line.get_data()
     trajectory_line.set_data(np.append(old_data[0], x), np.append(old_data[1], y))
     last_action = action
-
+    print(f'x,y:{(x,y)}') 
+    print(f'line_x:{trajectory_line.get_data()[0]}') 
+    print(f'line_y:{trajectory_line.get_data()[1]}') 
     
     return point, trajectory_line
 

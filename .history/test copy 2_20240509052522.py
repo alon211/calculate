@@ -6,12 +6,12 @@ import numpy as np
 import math
 # 预设参数
 radius = 10  # 内半径 正代表从圆心右边开始，负代表从圆心左边开始
-ex_radius = 15 # 外半径
+ex_radius = 100 # 外半径
 center_x, center_y = 5, 6  # 圆心坐标
 lineToX=True  #默认沿着X方向走半径后画圆
-tool_d=4 #工具直径要比精度大
+tool_d=0.2  #工具直径
 accurancy=1  #精度
-interval=1  #动画间隔时间ms 最小100ms再小前面会丢数据
+interval=1  #动画间隔时间ms
 ##################################
 LINE=10
 CIRCLE=20
@@ -23,7 +23,7 @@ action=0
 act_line=0.0
 act_angle=0.0
 act_n=0
-act_radius=radius
+
 tool_r=tool_d/2.0
 # 创建图形和轴
 fig, ax = plt.subplots()
@@ -44,21 +44,21 @@ def init():
 
 # 更新函数，用于动画的每一帧
 def update(frame):
-    global last_action, action, act_line, act_angle, act_n, x, y,act_radius,accurancy
-    
+    global last_action, action, act_line, act_angle, act_n, x, y
+    act_radius=radius+tool_r*act_n #当前半径=内圆半径+工具半径*圈数
   
     print(f'frame:{frame}')
-
+    print(f'act_radius:{act_radius}')
     print(f'act_n:{act_n}') 
     print(f'accurancy:{accurancy}') 
     print(f'action:{action}') 
     print(f'last_action:{last_action}')    
-   
+    print(f'frame*accurancy < act_radius+act_radius*act_n:{frame*accurancy < act_radius+act_radius*act_n}')
+
     if action==0:
         act_line = 0
         action=LINE    
-        x=center_x
-        y=center_y
+    
     if frame*accurancy == act_radius+360*act_n:
      
         if action==LINE:
@@ -67,32 +67,18 @@ def update(frame):
             act_n=act_n+1
         else:
             action=LINE
-            act_radius=radius+tool_r*act_n #当前半径=内圆半径+工具半径*圈数
             act_line = 0
-    print(f'act_radius:{act_radius}')
+   
       
     if action==LINE:
         act_line=act_line+accurancy
-        if radius<0: #沿着负方向移动
-            accurancy=accurancy*-1.0
-        if  lineToX:  #沿着xAxis方向移动            
-            x = x +accurancy    
-            y = y
-        else:  #沿着yAxis方向移动
-            x = x
-            y = y +accurancy
-
+        x = center_x +act_line    
+        y = center_y
     if action==CIRCLE:
-        act_angle=abs(accurancy)+act_angle
+        act_angle=accurancy+act_angle
         angle = act_angle * (2 * np.pi / (360.0))
-        if lineToX:  #沿着xAxis方向移动
-            x = center_x + act_radius * np.cos(angle)
-            y = center_y + act_radius * np.sin(angle)
-        else:  #沿着yAxis方向移动
-            x = center_x + act_radius * np.sin(angle)
-            y = center_y + act_radius * np.cos(angle)
-        # x = center_x + act_radius * np.cos(angle)
-        # y = center_y + act_radius * np.sin(angle)
+        x = center_x + act_radius * np.cos(angle)
+        y = center_y + act_radius * np.sin(angle)
         print(f'angle,x,y:{angle},{x},{y}')
         
  
@@ -109,14 +95,16 @@ def update(frame):
     # 更新点的位置
   
     point.set_data([x], [y])
-    if frame >= max_frames-1:
+    if frame >= max_frames:
         ani.event_source.stop()
     # 更新轨迹线的数据
     # if frame >= radius * 10:
     old_data = trajectory_line.get_data()
     trajectory_line.set_data(np.append(old_data[0], x), np.append(old_data[1], y))
     last_action = action
-
+    print(f'x,y:{(x,y)}') 
+    print(f'line_x:{trajectory_line.get_data()[0]}') 
+    print(f'line_y:{old_data[1]}') 
     
     return point, trajectory_line
 

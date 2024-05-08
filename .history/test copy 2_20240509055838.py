@@ -109,7 +109,7 @@ def update(frame):
     # 更新点的位置
   
     point.set_data([x], [y])
-    if frame >= max_frames-1:
+    if frame >= max_frames:
         ani.event_source.stop()
     # 更新轨迹线的数据
     # if frame >= radius * 10:

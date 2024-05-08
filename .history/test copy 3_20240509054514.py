@@ -10,6 +10,7 @@ center_x, center_y = 0, 0  # 圆心坐标
 lineToX=True  #默认沿着X方向走半径后画圆
 tool_d=4 #工具直径要比精度大
 accurancy=1  #精度
+
 # 创建图形和轴
 fig, (ax,ax1,ax2,ax3) = plt.subplots(4,figsize=(10,10))
 
